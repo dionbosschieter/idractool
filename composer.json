@@ -1,0 +1,19 @@
+{
+    "name": "dionbosschieter/idractool",
+    "description": "Can be used to manage dell mgmt interface idrac",
+    "require": {
+        "symfony/console": "^4.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dion Bosschieter",
+            "email": "dionbosschieter@gmail.com"
+        }
+    ],
+     "autoload": {
+        "psr-4": {
+            "Idrac\\": "src/Idrac"
+        }
+    }
+}
