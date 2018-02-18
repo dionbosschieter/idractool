@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 
 use Idrac\WsMan;
 use Idrac\FirmwareHandler;
+use Idrac\PasswordManager;
 
 class ListVersion extends Command
 {
@@ -16,8 +17,7 @@ class ListVersion extends Command
     {
         $this
             ->setName('list-version')
-            ->addArgument('host', InputArgument::REQUIRED, 'Host to connect to')
-            ->addArgument('password', InputArgument::REQUIRED, 'The password of the user.')
+            ->addArgument('hosts', InputArgument::REQUIRED, 'Host to connect to')
             ->setDescription('List version on idrac devices');
     }
 
@@ -29,15 +29,13 @@ class ListVersion extends Command
             '',
         ]);
 
-        $servers = [$input->getArgument('host')];
+        $servers = [$input->getArgument('hosts')];
         $user = 'root';
-        $password = $input->getArgument('password');
         $firmwareHandler = new FirmwareHandler();
 
         foreach ($servers as $hostname) {
-            $success = false;
             $url = WsMan\Client::getUrl($hostname);
-            $client = new WsMan\Client($url, $user, $password);
+            $client = new WsMan\Client($url, $user, PasswordManager::getForHost($hostname));
             $ids = $client->query(new WsMan\SoftwareInventoryQuery());
             $identities = $ids->getInstalledIdentities();
             foreach ($identities as $id) {
