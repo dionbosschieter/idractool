@@ -5,6 +5,7 @@ namespace Idrac\Command;
 use Idrac\FirmwareInstallScheduler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -19,7 +20,8 @@ class UpgradeFirmware extends Command
         $this
             ->setName('upgrade-firmware')
             ->addArgument('hosts', InputArgument::REQUIRED, 'Host to connect to, also supports a comma separated')
-            ->addOption('component')
+            ->addOption('component', 'c', InputOption::VALUE_OPTIONAL)
+            ->addOption('all', 'a')
             ->setDescription('Upgrades firmware for a specified component');
     }
 
@@ -36,9 +38,11 @@ class UpgradeFirmware extends Command
     {
         $servers = $input->getArgument('hosts');
         $component = $input->getOption('component');
+        $all = $input->getOption('all');
         $servers = explode(',', $servers);
         $user = 'root';
         $firmwareHandler = new FirmwareHandler();
+        $jobServerList = [];
 
         foreach ($servers as $hostname) {
             $output->writeln([
@@ -57,9 +61,11 @@ class UpgradeFirmware extends Command
             $identities = $ids->getInstalledIdentities();
 
             $firmwares = $firmwareHandler->getFirmwares($systemId, $identities);
-            if (isset($firmwares[$component])) {
-                $output->writeln("Found component {$component}, scheduling upgrade...");
-                $jobs = $firmwareScheduler->scheduleFirmwaresForIdentities([$firmwares[$component]], $identities);
+            $jobs = [];
+            if ($all && count($firmwares) > 0) {
+                $jobs = $firmwareScheduler->scheduleFirmwaresForIdentities($firmwares, $identities);
+            } else if (isset($firmwares[$component])) {
+                $jobs = $firmwareScheduler->scheduleFirmwaresForIdentities([$component => $firmwares[$component]], $identities);
             }
         }
     }

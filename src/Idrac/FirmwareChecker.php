@@ -43,7 +43,7 @@ class FirmwareChecker
             foreach ($dellFirmwares as $dellFirmware) {
                 $this->log("Checking if ({$dellFirmware->getVersion()} > {$softwareIdentity->getVersion()})");
                 if ($dellFirmware->getVersion() > $softwareIdentity->getVersion()) {
-                    $this->log("Firmware found for {$softwareIdentity->getComponentId()} {$softwareIdentity->getComponentName()} {$dellFirmware->getPath()}  {$dellFirmware->getPackageId()} {$dellFirmware->getPackageType()}");
+                    $this->log("Firmware found for [componentId={$softwareIdentity->getComponentId()}] {$softwareIdentity->getComponentName()} {$dellFirmware->getPath()}  {$dellFirmware->getPackageId()} {$dellFirmware->getPackageType()}");
 
                     $firmwaresToSchedules[$softwareIdentity->getComponentId()] = $dellFirmware;
                 }

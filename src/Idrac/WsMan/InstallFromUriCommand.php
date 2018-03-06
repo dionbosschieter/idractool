@@ -29,25 +29,17 @@ class InstallFromUriCommand extends Request implements Command
     ];
 
     /**
-     * @param string $nfsEndpoint ip of nfs server
-     * @param string $nfsShareName
-     * @param string $fileName
+     * @param string $uri
      * @param SoftwareIdentity $identity current firmware to override/update
      * @throws Exception either when updatefilename is wrong or the nfs endpoint is not a legit IP
      */
-    public function __construct($nfsEndpoint, $nfsShareName, $fileName, SoftwareIdentity $identity)
+    public function __construct($uri, SoftwareIdentity $identity)
     {
-        if ( ! preg_match('/(\.*).exe/i', $fileName)) {
-            throw new Exception("Unknown type of fw installation file $fileName");
-        }
-        if (! Util::isValidIP($nfsEndpoint)) {
-            throw new Exception("A valid ip should be given for the nfs endpoint");
+        if ( ! preg_match('/(\.*).exe/i', $uri)) {
+            throw new Exception("Unknown type of fw installation file $uri");
         }
 
         parent::__construct();
-
-        $nfsShareName = trim($nfsShareName, '/');
-        $uri = "nfs://$nfsEndpoint/$fileName;mountpoint=/$nfsShareName";
 
         $this->body = $this->createBodyXML($uri, $identity->getInstanceId());
     }
