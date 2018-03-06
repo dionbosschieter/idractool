@@ -47,7 +47,7 @@ class UpgradeFirmware extends Command
         foreach ($servers as $hostname) {
             $output->writeln([
                 'Possible Firmware Upgrades',
-                '============',
+                '==========================',
                 '',
             ]);
             $url = WsMan\Client::getUrl($hostname);
