@@ -38,7 +38,6 @@ class Client
      */
     public function perform(Command $command)
     {
-        $asString = true;
         $command->setEndpoint($this->url);
         $response = $this->send($command->getAsXML());
 
@@ -54,7 +53,6 @@ class Client
      */
     public function query(DataQuery $query)
     {
-        $asString = true;
         $query->setEndpoint($this->url);
         $response = $this->send($query->getAsXML());
         $className = $this->getResponseClassNameForQuery($query);
@@ -78,6 +76,10 @@ class Client
         $context = $this->getStreamContext($xml);
         $response = file_get_contents($this->url, false, $context);
 
+        if ($response === false) {
+            throw new Exception("Connection to [url={$this->url}] failed");
+        }
+
         return $response;
     }
 
@@ -93,7 +95,8 @@ class Client
         $contextOptions = [
             'http' => [
                 'method' => 'POST',
-                'header' => 'Authorization: Basic '.$basicAuth,
+                'header' => "Content-Type: application/xml\r\n" .
+                            "Authorization: Basic {$basicAuth}\r\n",
                 'content' => $content,
                 'timeout' => 60,
             ],
@@ -122,6 +125,7 @@ class Client
      * Returns the wsman url for the given host
      *
      * @param string $hostname
+     * @return string
      */
     public static function getUrl($hostname)
     {

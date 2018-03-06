@@ -11,36 +11,39 @@ use Idrac\WsMan;
 use Idrac\FirmwareHandler;
 use Idrac\PasswordManager;
 
-class ListVersion extends Command
+class ListUpgrades extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('list-version')
+            ->setName('list-upgrades')
             ->addArgument('hosts', InputArgument::REQUIRED, 'Host to connect to, also supports a comma separated')
-            ->setDescription('List version on idrac devices');
+            ->setDescription('List all possible firmware upgrades');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln([
-            'Versions',
-            '============',
-            '',
-        ]);
-
         $servers = $input->getArgument('hosts');
         $servers = explode(',', $servers);
         $user = 'root';
+        $firmwareHandler = new FirmwareHandler();
 
         foreach ($servers as $hostname) {
+            $output->writeln([
+                'Possible Firmware Upgrades',
+                '============',
+                '',
+            ]);
             $url = WsMan\Client::getUrl($hostname);
             $client = new WsMan\Client($url, $user, PasswordManager::getForHost($hostname));
+
+            $response = $client->query(new WsMan\SystemViewQuery());
+            $systemId = (int) $response->getValueOfTagName("SystemID");
+
             $ids = $client->query(new WsMan\SoftwareInventoryQuery());
             $identities = $ids->getInstalledIdentities();
-            foreach ($identities as $id) {
-                $output->writeln($id->getComponentName() . ': ' . $id->getVersion());
-            }
+
+            $firmwareHandler->getFirmwares($systemId, $identities);
         }
     }
 }

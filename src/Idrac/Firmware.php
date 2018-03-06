@@ -2,8 +2,7 @@
 
 namespace Idrac;
 
-use Ensure;
-use ErrorCodes;
+use Exception;
 use SimpleXMLElement;
 
 /**
@@ -28,10 +27,12 @@ class Firmware
     {
         foreach ($this->keysThatShouldExist as $keyThatShouldExist) {
             if ( ! isset($firmwareModel[$keyThatShouldExist])) {
-                throw new Exception("The given firmware model does not contain key '{$keyThatShouldExist}'", ErrorCodes::INTERNAL);
+                throw new Exception("The given firmware model does not contain key '{$keyThatShouldExist}'");
             }
 
-            Ensure::notEmpty($firmwareModel[$keyThatShouldExist], "The firmware model's key '{$keyThatShouldExist}' is empty");
+            if ($firmwareModel[$keyThatShouldExist] == null) {
+                throw new Exception("The firmware model's key '{$keyThatShouldExist}' is empty");
+            }
         }
 
         $this->model = $firmwareModel;
