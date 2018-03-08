@@ -4,6 +4,7 @@ namespace Idrac;
 
 use Idrac\WsMan\Client;
 use Idrac\WsMan\InstallFromUriCommand;
+use Idrac\WsMan\JobResponse;
 use Idrac\WsMan\ScheduleJobNowCommand;
 use Idrac\WsMan\SoftwareIdentity;
 use Idrac\WsMan\SoftwareInventoryResponse;
@@ -32,7 +33,7 @@ class FirmwareInstallScheduler
      *
      * @param Firmware[] $firmwaresToSchedule
      * @param SoftwareIdentity[] $installedIdentities
-     * @return array|string[] list of job ids
+     * @return JobResponse[] list of jobs
      */
     public function scheduleFirmwaresForIdentities($firmwaresToSchedule, $installedIdentities)
     {
@@ -51,7 +52,7 @@ class FirmwareInstallScheduler
             Log::info(get_class(), "Scheduling update installation for {$matchedSoftwareIdentity->getComponentName()}");
             $this->wsmanClient->perform(new ScheduleJobNowCommand($response->getJobId()));
 
-            $jobs[] = $response->getJobId();
+            $jobs[] = $response;
         }
 
         return $jobs;
