@@ -30,9 +30,8 @@ class ListUpgrades extends Command
 
         foreach ($servers as $hostname) {
             $output->writeln([
-                'Possible Firmware Upgrades',
-                '============',
-                '',
+                "<info>Possible Firmware Upgrades {$hostname}",
+                '============</info>',
             ]);
             $url = WsMan\Client::getUrl($hostname);
             $client = new WsMan\Client($url, $user, PasswordManager::getForHost($hostname));
@@ -44,6 +43,7 @@ class ListUpgrades extends Command
             $identities = $ids->getInstalledIdentities();
 
             $firmwareHandler->getFirmwares($systemId, $identities);
+            $output->writeln('');
         }
     }
 }

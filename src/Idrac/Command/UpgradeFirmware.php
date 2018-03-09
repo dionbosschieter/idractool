@@ -39,9 +39,8 @@ class UpgradeFirmware extends Command
 
         foreach ($servers as $hostname) {
             $output->writeln([
-                "Firmware upgrade for {$hostname}",
-                '==========================',
-                '',
+                "<info>Firmware upgrade for {$hostname}",
+                '==========================</info>',
             ]);
             $url = WsMan\Client::getUrl($hostname);
             $client = new WsMan\Client($url, $user, PasswordManager::getForHost($hostname));
@@ -64,6 +63,7 @@ class UpgradeFirmware extends Command
             if ($jobs) {
                 $allJobs[] = [$hostname, $client, $jobs];
             }
+            $output->writeln('');
         }
 
         if ($wait) {

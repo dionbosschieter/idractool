@@ -74,7 +74,17 @@ class Client
     private function send($xml)
     {
         $context = $this->getStreamContext($xml);
-        $response = file_get_contents($this->url, false, $context);
+
+        // epic retry
+        $response = "";
+        for ($i=0;$i<5;$i++) {
+            $response = @file_get_contents($this->url, false, $context);
+
+            if ($response !== false) {
+                break;
+            }
+            sleep(1);
+        }
 
         if ($response === false) {
             throw new Exception("Connection to [url={$this->url}] failed");
