@@ -46,9 +46,7 @@ class FirmwareInstallScheduler
                 continue;
             }
 
-            $downloadUrl = $dellFirmware->getDownloadUrl();
-
-            $response = $this->wsmanClient->perform(new InstallFromUriCommand($downloadUrl, $matchedSoftwareIdentity));
+            $response = $this->wsmanClient->perform(new InstallFromUriCommand($dellFirmware, $matchedSoftwareIdentity));
             Log::info(get_class(), "Scheduling update installation for {$matchedSoftwareIdentity->getComponentName()}");
             $this->wsmanClient->perform(new ScheduleJobNowCommand($response->getJobId()));
 

@@ -4,6 +4,8 @@ namespace Idrac\WsMan;
 
 use DOMDocument;
 use Exception;
+use Idrac\Firmware;
+use Idrac\UriManager;
 use Util;
 
 /**
@@ -33,13 +35,15 @@ class InstallFromUriCommand extends Request implements Command
      * @param SoftwareIdentity $identity current firmware to override/update
      * @throws Exception either when updatefilename is wrong or the nfs endpoint is not a legit IP
      */
-    public function __construct($uri, SoftwareIdentity $identity)
+    public function __construct(Firmware $firmware, SoftwareIdentity $identity)
     {
-        if ( ! preg_match('/(\.*).exe/i', $uri)) {
-            throw new Exception("Unknown type of fw installation file $uri");
+        if ( ! preg_match('/(\.*).exe/i', $firmware->getFileName())) {
+            throw new Exception("Unknown type of fw installation file {$firmware->getFileName()}");
         }
 
         parent::__construct();
+
+        $uri = UriManager::getUriForFirmware($firmware);
 
         $this->body = $this->createBodyXML($uri, $identity->getInstanceId());
     }
