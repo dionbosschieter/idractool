@@ -28,11 +28,12 @@ class UpgradeFirmware extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $servers = $input->getArgument('hosts');
+        $hostInterpreter = new \Idrac\HostInterpreter($input->getArgument('hosts'));
+        $servers = $hostInterpreter->getAllHosts();
         $component = $input->getOption('component');
         $all = $input->getOption('all');
         $wait = $input->getOption('wait');
-        $servers = explode(',', $servers);
+
         $user = 'root';
         $firmwareHandler = new FirmwareHandler();
         $allJobs = [];

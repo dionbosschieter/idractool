@@ -11,38 +11,48 @@ use Idrac\WsMan;
 use Idrac\FirmwareHandler;
 use Idrac\PasswordManager;
 
-class ListUpgrades extends Command
+class DownloadUpgrade extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('list-upgrades')
-            ->addArgument('hosts', InputArgument::REQUIRED, 'Host to connect to, also supports a comma separated')
-            ->setDescription('List all possible firmware upgrades');
+            ->setName('download-upgrade')
+            ->addArgument('host', InputArgument::REQUIRED, 'Host to connect to')
+            ->setDescription('List all possible firmware upgrades and choose one to download');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $hostInterpreter = new \Idrac\HostInterpreter($input->getArgument('hosts'));
+        $hostInterpreter = new \Idrac\HostInterpreter($input->getArgument('host'));
         $servers = $hostInterpreter->getAllHosts();
         $user = 'root';
         $firmwareHandler = new FirmwareHandler();
 
         foreach ($servers as $hostname) {
             $output->writeln([
-                "<info>Possible Firmware Upgrades {$hostname}",
+                "<info>Fetching firmwares to download for {$hostname}",
                 '============</info>',
             ]);
+
             $url = WsMan\Client::getUrl($hostname);
             $client = new WsMan\Client($url, $user, PasswordManager::getForHost($hostname));
 
             $response = $client->query(new WsMan\SystemViewQuery());
             $systemId = (int) $response->getValueOfTagName("SystemID");
 
+            /** @var WsMan\SoftwareInventoryResponse $ids */
             $ids = $client->query(new WsMan\SoftwareInventoryQuery());
             $identities = $ids->getInstalledIdentities();
 
-            $firmwareHandler->getFirmwares($systemId, $identities);
+            $firmwaresToDownload = $firmwareHandler->getFirmwares($systemId, $identities);
+
+            foreach ($firmwaresToDownload as $firmware) {
+                $output->writeln("Downloading firmware: {$firmware->getFileName()} to " . __DIR__);
+
+                $firmwareBlob = file_get_contents($firmware->getDownloadUrl());
+                file_put_contents(__DIR__ . '/' . $firmware->getFileName(), $firmwareBlob);
+            }
+
             $output->writeln('');
         }
     }

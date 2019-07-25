@@ -29,8 +29,9 @@ class ListVersion extends Command
             '',
         ]);
 
-        $servers = $input->getArgument('hosts');
-        $servers = explode(',', $servers);
+        $hostInterpreter = new \Idrac\HostInterpreter($input->getArgument('hosts'));
+        $servers = $hostInterpreter->getAllHosts();
+
         $user = 'root';
 
         foreach ($servers as $hostname) {
