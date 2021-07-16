@@ -11,20 +11,20 @@ use Idrac\WsMan;
 use Idrac\FirmwareHandler;
 use Idrac\PasswordManager;
 
-class ListNics extends Command
+class EnumerateNics extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('list-nics')
+            ->setName('enumerate-nics')
             ->addArgument('hosts', InputArgument::REQUIRED, 'Host to connect to, also supports a comma separated')
-            ->setDescription('List version on idrac devices');
+            ->setDescription('Get the BIOS configuration for the NICs');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln([
-            'Nics',
+            'NIC Config XML',
             '============',
             '',
         ]);
@@ -37,13 +37,13 @@ class ListNics extends Command
         foreach ($servers as $hostname) {
             $url = WsMan\Client::getUrl($hostname);
             $client = new WsMan\Client($url, $user, PasswordManager::getForHost($hostname));
-            /** @var WsMan\NicInventoryResponse $inventoryResponse */
-            $inventoryResponse = $client->query(new WsMan\NicInventoryQuery());
-            $output->write($inventoryResponse->getAsXML());
-            $nics = $inventoryResponse->getMainNics();
-            foreach ($nics as $index => $nic) {
-                $output->writeln("{$nic->getInstanceID()} = {$nic->getDeviceDescription()} ({$nic->getMacAddress()}) '{$nic->getVendorName()} {$nic->getProductName()}'");
-            }
+            /** @var WsMan\DataQueryResponse $response */
+            $response = $client->query(new WsMan\NicIntegerEnumerationQuery);
+            $output->write($response->getAsXML());
+
+            /** @var WsMan\DataQueryResponse $response */
+            $response = $client->query(new WsMan\NicEnumerationQuery);
+            $output->write($response->getAsXML());
         }
     }
 }
