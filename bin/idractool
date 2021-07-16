@@ -9,6 +9,8 @@ $application = new Application();
 
 $application->add(new \Idrac\Command\ListVersion);
 $application->add(new \Idrac\Command\ListUpgrades);
+$application->add(new \Idrac\Command\ListNics);
+$application->add(new \Idrac\Command\ListBIOS);
 $application->add(new \Idrac\Command\UpgradeFirmware);
 $application->add(new \Idrac\Command\DownloadUpgrade);
 

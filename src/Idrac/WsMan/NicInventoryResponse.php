@@ -15,7 +15,7 @@ class NicInventoryResponse extends Response
      *
      * @return Nic[]
      */
-    public function getNics()
+    public function getNics(): array
     {
         if (empty($this->nics)) {
             $this->nics = $this->getNicsFromXml();
@@ -29,7 +29,7 @@ class NicInventoryResponse extends Response
      *
      * @return Nic[]
      */
-    public function getMainNics()
+    public function getMainNics(): array
     {
         return array_filter($this->getNics(), function (Nic $nic) {
             return $nic->getMACAddress() !== '';
@@ -41,7 +41,7 @@ class NicInventoryResponse extends Response
      *
      * @return Nic[]
      */
-    private function getNicsFromXml()
+    private function getNicsFromXml(): array
     {
         $list = [];
 

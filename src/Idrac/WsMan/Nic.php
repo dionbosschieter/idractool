@@ -28,7 +28,7 @@ class Nic
      * @return string
      * @throws Exception
      */
-    private function getValueOfTagName($tagName)
+    private function getValueOfTagName($tagName): string
     {
         $nodeList = $this->data->getElementsByTagName($tagName);
 
@@ -39,14 +39,53 @@ class Nic
         return $nodeList->item(0)->nodeValue;
     }
 
-
     /**
      * Returns the mac address of this nic
      *
      * @return string
      */
-    public function getMACAddress()
+    public function getMACAddress(): string
     {
         return $this->getValueOfTagName('CurrentMACAddress');
+    }
+
+    /**
+     * Returns the description of the nic
+     *
+     * @return string
+     */
+    public function getDeviceDescription(): string
+    {
+        return $this->getValueOfTagName('DeviceDescription');
+    }
+
+    /**
+     * Returns the product name of this nic
+     *
+     * @return string
+     */
+    public function getProductName(): string
+    {
+        return $this->getValueOfTagName('ProductName');
+    }
+
+    /**
+     * Returns the insntance id of this nic
+     *
+     * @return string
+     */
+    public function getInstanceID(): string
+    {
+        return $this->getValueOfTagName('InstanceID');
+    }
+
+    /**
+     * Returns the vendor name of this nic
+     *
+     * @return string
+     */
+    public function getVendorName(): string
+    {
+        return $this->getValueOfTagName('VendorName');
     }
 }
