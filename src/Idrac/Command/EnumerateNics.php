@@ -35,15 +35,21 @@ class EnumerateNics extends Command
         $user = 'root';
 
         foreach ($servers as $hostname) {
+            $output->writeln("# {$hostname}");
+
             $url = WsMan\Client::getUrl($hostname);
             $client = new WsMan\Client($url, $user, PasswordManager::getForHost($hostname));
-            /** @var WsMan\DataQueryResponse $response */
+             /** @var WsMan\NicIntegerEnumerationResponse $response */
             $response = $client->query(new WsMan\NicIntegerEnumerationQuery);
-            $output->write($response->getAsXML());
+            foreach ($response->getNicConfigs() as $config) {
+                $output->writeln("{$config->getNicInstanceId()} Vlan id = {$config->getVlanId()}");
+            }
 
-            /** @var WsMan\DataQueryResponse $response */
+            /** @var WsMan\NicEnumerationResponse $response */
             $response = $client->query(new WsMan\NicEnumerationQuery);
-            $output->write($response->getAsXML());
+            foreach ($response->getNicConfigs() as $config) {
+                $output->writeln("{$config->getNicInstanceId()} Vlan mode = {$config->getVlanMode()}");
+            }
         }
     }
 }
