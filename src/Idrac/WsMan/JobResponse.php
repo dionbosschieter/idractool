@@ -25,4 +25,18 @@ class JobResponse extends Response
 
         return $obj->item(0)->nodeValue;
     }
+
+    public function getMessage(): string
+    {
+        $obj = $this->xpath->query('.//n1:Message');
+
+        return $obj->item(0)->nodeValue;
+    }
+
+    public function getReturnValue(): int
+    {
+        $obj = $this->xpath->query('.//n1:ReturnValue');
+
+        return intval($obj->item(0)->nodeValue);
+    }
 }
