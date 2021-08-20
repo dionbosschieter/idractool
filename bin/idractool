@@ -16,5 +16,6 @@ $application->add(new \Idrac\Command\EnumerateNics);
 $application->add(new \Idrac\Command\UpgradeFirmware);
 $application->add(new \Idrac\Command\DownloadUpgrade);
 $application->add(new \Idrac\Command\EnableImpi);
+$application->add(new \Idrac\Command\SetPxeVlan);
 
 $application->run();

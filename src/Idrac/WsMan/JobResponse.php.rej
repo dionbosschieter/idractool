@@ -1,0 +1,19 @@
+diff a/src/Idrac/WsMan/JobResponse.php b/src/Idrac/WsMan/JobResponse.php	(rejected hunks)
+@@ -25,4 +25,17 @@ class JobResponse extends Response
+ 
+         return $obj->item(0)->nodeValue;
+     }
++
++    /**
++     * Retrieves the job id from the XML
++     *
++     * @return string
++     * @throws Exception when wsman namespace is non existing
++     */
++    public function getMessage()
++    {
++        $obj = $this->dom->getElementsByTagName('Message');
++
++        return $obj->item(0)->nodeValue;
++    }
+ }

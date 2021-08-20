@@ -42,7 +42,7 @@ class EnumerateNics extends Command
              /** @var WsMan\NicIntegerEnumerationResponse $response */
             $response = $client->query(new WsMan\NicIntegerEnumerationQuery);
             foreach ($response->getNicConfigs() as $config) {
-                $output->writeln("{$config->getNicInstanceId()} Vlan id = {$config->getVlanId()}");
+                $output->writeln("{$config->getNicInstanceId()} Vlan id = {$config->getVlanId()} (pending change: {$config->getPendingVlanId()})");
             }
 
             /** @var WsMan\NicEnumerationResponse $response */

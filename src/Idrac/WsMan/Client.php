@@ -113,6 +113,7 @@ class Client
             'ssl' => [
                 'verify_peer' => false,
                 'verify_peer_name' => false,
+                'ciphers' => 'DEFAULT:!DH',
             ]
         ];
         return stream_context_create($contextOptions);

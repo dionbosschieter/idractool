@@ -30,7 +30,7 @@ class JobResponse extends Response
     {
         $obj = $this->xpath->query('.//n1:Message');
 
-        return $obj->item(0)->nodeValue;
+        return $obj->item(0)->nodeValue ?? '';
     }
 
     public function getReturnValue(): int
@@ -38,5 +38,15 @@ class JobResponse extends Response
         $obj = $this->xpath->query('.//n1:ReturnValue');
 
         return intval($obj->item(0)->nodeValue);
+    }
+
+    public function isAlreadyCreated(): bool
+    {
+        return strpos($this->getMessage(), 'Configuration job already created') !== false;
+    }
+
+    public function isAttributeDoesNotExist(): bool
+    {
+        return strpos($this->getMessage(), 'Invalid AttributeName') !== false;
     }
 }

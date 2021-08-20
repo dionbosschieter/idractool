@@ -29,6 +29,17 @@ class NicConfig
         return '';
     }
 
+    private function getPendingValueOfAttributeName($tagName): string
+    {
+        foreach ($this->data as $configData) {
+            if ($configData['name'] === $tagName) {
+                return $configData['pending'];
+            }
+        }
+
+        return '';
+    }
+
     public function getVlanMode(): string
     {
         return $this->getValueOfAttributeName('VLanMode');
@@ -37,6 +48,10 @@ class NicConfig
     public function getVlanId(): string
     {
         return $this->getValueOfAttributeName('VLanId');
+    }
+    public function getPendingVlanId(): string
+    {
+        return $this->getPendingValueOfAttributeName('VLanId');
     }
 
     public function getNicInstanceId(): string

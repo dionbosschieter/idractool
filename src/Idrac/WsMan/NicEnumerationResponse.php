@@ -32,6 +32,7 @@ class NicEnumerationResponse extends Response
                 'name'     => $nodeData['AttributeName'],
                 'value'    => $nodeData['CurrentValue'],
                 'readOnly' => $nodeData['IsReadOnly'],
+                'pending'  => $nodeData['PendingValue'],
             ];
         }
 
